@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MazeCell.h" />
     <ClInclude Include="MyQ.h" />
     <ClInclude Include="myStack.h" />
   </ItemGroup>

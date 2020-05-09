@@ -4,6 +4,7 @@
 #include <string>
 #include "myStack.h"
 #include "MyQ.h"
+#include "MazeCell.h"
 
 using namespace std;
 

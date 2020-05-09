@@ -28,6 +28,12 @@ public:
 
 	int size()const { return sz; }
 
+	bool empty()const { return sz == 0; }
+
+	T& top() { return front->val; }
+	T top()const { return front->val; }
+	void pop() { front = front->next; sz--; }
+
 
 private:
 	Node* front;

@@ -10,12 +10,15 @@ int main() {
 
 	MyStack<int> stk;
 
-	for (size_t i = 0; i < 1000; i++)
+	for (size_t i = 0; i < 10; i++)
 	{
-		stk.push(i);
+		stk.push(i*2);
 	}
 
-	cout << stk.size();
+	while (!stk.empty()) {
+		cout << stk.top() << endl;
+		stk.pop();
+	}
 
 	return 0;
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include "myStack.h"
 #include "MazeCell.h"
 
@@ -16,210 +17,264 @@ using namespace std;
 
 
 //depthFirst header
-void depthFirst(MazeCell* curr, MazeCell end);
+void depthFirst(MazeCell curr, MazeCell end);
 
 //checks for validity of position
 bool isValid(int r, int c);
 
+//gets neighbors of a MazeCell
+vector<MazeCell> getNeighbors(const MazeCell& curr);
+
+//global variables
+int rows, cols;
+
+//pointer to the grid
+int** grid;
+//pointer to the maze cells
+MazeCell** cells;
 
 int main() {
 	
 	//create the Maze from the file
 	ifstream fin("maze.in");
 
+	
+	if(!fin){
+		cout << "File not found\n";
+		exit(2);
+
 	return 0;
 }
 
-//	//create MazeCells for the open cells
-//	//all MazeCells have an initial direction
-//	//of North (N) and are unvisited
-//	//store in 2-D array of cells
-//	//wall cells will hold the nullptr	
-//	for (int i = 0; i < ROWS; i++) {
-//		for (int j = 0; j < COLS; j++) {
-//			if (maze[i][j] == 1) {
-//				mazeCells[i][j] = new MazeCell(i, j);
-//			}
-//			else {
-//				mazeCells[i][j] = nullptr;
-//			}
-//		}
-//	}
-//
-//
-//	MazeCell start(6, 4), end(6, 11);
-//	cout << "start: " << start << " end: " << end << endl;
-//
-//	//depthFirst(&start, end);
-//	breadthFirst(&start, end);
-//
-//	return 0;
-//}
-//
-////this function should determine whether or not a path exists
-////through a maze. If a path is found, output a message
-////If no path exists, output a message
-//void breadthFirst(MazeCell* curr, MazeCell end) {
-//	cout << "adding " << *curr << endl;
-//	the_q.push(curr);
-//	if (*curr == end) {
-//		cout << "Path found to " << end << endl;
-//		exit(1);
-//	}
-//	else if (the_q.size() == 1 && (the_q.front()->getDirection() == 4) ){
-//		cout<<"No path exists - you are stuck at "<< *curr << endl;
-//	}
-//	else {
-//		//push all of curr's neighbors on the queue
-//		int r = curr->getRow(), c = curr->getCol();
-//		if (curr->getDirection() == NORTH) {
-//			if (isValid(r - 1, c) && mazeCells[r - 1][c]->unVisited()) {
-//				//put it on the queue and advance the direction
-//				the_q.push(mazeCells[r - 1][c]);				
-//			}
-//			curr->advanceDirection();
-//		}
-//		if (curr->getDirection() == EAST) {
-//			if (isValid(r, c + 1) && mazeCells[r][c + 1]->unVisited()) {
-//				//put it on the queue and a dvance the direction
-//				the_q.push(mazeCells[r][c + 1]);
-//			}
-//			curr->advanceDirection();
-//		}
-//		if (curr->getDirection() == SOUTH) {
-//			if (isValid(r + 1, c) && mazeCells[r + 1][c]->unVisited()) {
-//				//put it on the queue and advance the direction
-//				the_q.push(mazeCells[r + 1][c]);			
-//			}
-//			curr->advanceDirection();
-//		}
-//		if (curr->getDirection() == WEST) {
-//			if (isValid(r, c - 1) && mazeCells[r][c - 1]->unVisited()) {
-//				//put it on the queue and advance the direction
-//				the_q.push(mazeCells[r][c - 1]);
-//			}
-//			curr->advanceDirection();
-//		}
-//		if (curr->getDirection() == DONE) {
-//			//all of curr's neighbors are processed, remove curr
-//			cout << "removing " << *the_q.front() << endl;
-//			the_q.pop();
-//		}
-//
-//		//set new q front as curr
-//		curr = the_q.front();
-//		breadthFirst(curr, end);
-//		
-//	}
+	//read in the rows and cols
+	fin >> rows >> cols;
+
+	//create the maze rows
+	grid = new int* [rows];
+	
+	//add each column
+	for (int i = 0; i < rows; i++)
+		grid[i] = new int[cols];
+
+	//read in the data from the file to populate
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			fin >> grid[i][j];
+		}
+	}
+
+	//look at it for testing
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			if (grid[i][j] == 3)
+				cout << "S" << " ";
+			else if (grid[i][j] == 4)
+				cout << "E" << " ";
+			else
+				cout << grid[i][j] << " ";
+		}
+		cout << endl;
+	}
+
+	//make a 2-d array of cells
+	cells = new MazeCell * [rows];
+	for (int i = 0; i < rows; i++) {
+		cells[i] = new MazeCell[cols];
+	}
+
+	////test it
+	//for (int i = 0; i < rows; i++) {
+	//	for (int j = 0; j < cols; j++) {
+	//		cout << cells[i][j] << "  ";
+	//	}
+	//	cout << endl;
+	//}
+
+	//all MazeCell in the cells grid has a default init
+	//only update those cells that are not walls
+
+	MazeCell start, end;
+	//iterate over the grid
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			if (grid[i][j] != 0) {
+				cells[i][j].setCoordinates(i, j);
+				if (grid[i][j] == 3)
+					start = cells[i][j];
+				if (grid[i][j] == 4) 
+					end = cells[i][j];
+				
+			}
+
+		}
+	}
+	
+	//for testing
+	cout <<"start: "<< start << " end: " << end << endl;
+
+	//depthFirst(&start, end);
+
+
+	return 0;
 }
+
 
 //this function should find a path through the maze
 //if found, output the path from start to end
 //if not path exists, output a message stating so
-//void depthFirst(MazeCell* curr, MazeCell end)
-//{
-//	//your implementation here
-//	int r = curr->getRow(), c = curr->getCol();
-//	
-//	//cout << "curr: " << *curr << endl;
-//	//push curr on the stack
-//	stk.push(curr);
-//
-//	//is curr end?
-//	if (*curr == end) {
-//		cout << "you win" << endl;
-//		//add logic to display path
-//		//empty stack and fill a queue
-//		while (!stk.empty()) {
-//			pth.push(stk.top());
-//			stk.pop();
-//		}
-//
-//		//displaying the path
-//		while (!pth.empty()) {
-//			string s =(pth.top()->toString());
-//			pth.pop();
-//			printf("%-6s ", s.c_str());
-//		}
-//		cout << endl;
-//		exit(2);
-//	}
-//	else if (stk.top()->getDirection() == 4 && stk.size() == 1) {
-//		cout << "there is no path" << endl;
-//		exit(3);
-//	}
-//	else {
-//		//solve maze for north neighbor
-//		if (curr->getDirection() == NORTH) {
-//			if (isValid(r - 1, c) && mazeCells[r - 1][c]->unVisited()) {
-//				curr->visit();
-//				curr = mazeCells[r - 1][c];
-//				depthFirst(curr, end);
-//			}
-//			else {
-//				//update direction and solve for curr
-//				curr->advanceDirection();
-//				stk.pop();
-//				depthFirst(curr, end);
-//			}
-//		}
-//		else if (curr->getDirection() == EAST) {
-//			if (isValid(r, c + 1) && mazeCells[r][c + 1]->unVisited()) {
-//				curr->visit();
-//				curr = mazeCells[r][c + 1];
-//				depthFirst(curr, end);
-//			}
-//			else {
-//				//update direction and solve for curr
-//				curr->advanceDirection();
-//				stk.pop();
-//				depthFirst(curr, end);
-//			}
-//		}
-//		else if (curr->getDirection() == SOUTH) {
-//			if (isValid(r + 1, c) && mazeCells[r + 1][c]->unVisited()) {
-//				curr->visit();
-//				curr = mazeCells[r + 1][c];
-//				depthFirst(curr, end);
-//			}
-//			else {
-//				curr->advanceDirection();
-//				stk.pop();
-//				depthFirst(curr, end);
-//			}
-//		}
-//		else if (curr->getDirection() == WEST) {
-//			if (isValid(r, c - 1) && mazeCells[r][c - 1]->unVisited()){
-//				curr->visit();
-//				curr = mazeCells[r][c - 1];
-//				depthFirst(curr, end);
-//			}
-//			else {
-//				curr->advanceDirection();
-//				stk.pop();
-//				depthFirst(curr, end);
-//			}
-//		}
-//		else if (curr->getDirection() == DONE) {
-//			//remove curr from stack
-//			stk.pop();
-//			curr = stk.top();
-//			stk.pop();
-//		}
-//	}
-//	
-//
-//}
-//
-////return true if pos is on grid and represents an open cell
-//bool isValid(int r, int c) {
-//	if (r >= 0 && r < ROWS && c >= 0 && c < COLS) {
-//		if (maze[r][c] == 1) {
-//			return true;
-//		}
-//		else {
-//			cout << "invalid location "<<r<<","<<c << endl;
-//		}
-//	}
-//	return false;
-//}
+void depthFirst(MazeCell start, MazeCell end)
+{
+	MyStack<MazeCell> stk;
+	//put the start cell on the stack
+	stk.push(start);
+
+	MazeCell curr;
+
+	while (!stk.empty()) {
+
+		//get node at top of stack
+		curr = stk.top();
+		stk.pop();
+
+
+
+
+	}
+
+
+
+
+
+
+	////your implementation here
+	//int r = curr.getRow(), c = curr.getCol();
+	//
+	////create a stack
+	//MyStack <MazeCell> stk;
+	//MyStack <MazeCell> revStack;
+	//
+	////put this cell on the stack
+	//stk.push(curr);
+
+	////is curr end?
+	//if (curr == end) {
+	//	cout << "you win" << endl;
+	//	//add logic to display path
+	//	//empty stack and fill a queue
+	//	while (!stk.empty()) {
+	//		revStack.push(stk.top());
+	//		stk.pop();
+	//	}
+
+	//	//displaying the path
+	//	while (!revStack.empty()) {
+	//		string s =(revStack.top().toString());
+	//		revStack.pop();
+	//		printf("%-6s ", s.c_str());
+	//	}
+	//	cout << endl;
+	//	exit(2);
+	//}
+	//else if (stk.top().getDirection() == 4 && stk.size() == 1) {
+	//	cout << "there is no path" << endl;
+	//	exit(3);
+	//}
+	//else {
+	//	//solve maze for north neighbor
+	//	if (curr.getDirection() == NORTH) {
+	//		if (isValid(r - 1, c) && cells[r - 1][c]->unVisited()) {
+	//			curr.visit();
+	//			curr = cells[r - 1][c];
+	//			depthFirst(curr, end);
+	//		}
+	//		else {
+	//			//update direction and solve for curr
+	//			curr->advanceDirection();
+	//			stk.pop();
+	//			depthFirst(curr, end);
+	//		}
+	//	}
+	//	else if (curr->getDirection() == EAST) {
+	//		if (isValid(r, c + 1) && cells[r][c + 1]->unVisited()) {
+	//			curr->visit();
+	//			curr = cells[r][c + 1];
+	//			depthFirst(curr, end);
+	//		}
+	//		else {
+	//			//update direction and solve for curr
+	//			curr->advanceDirection();
+	//			stk.pop();
+	//			depthFirst(curr, end);
+	//		}
+	//	}
+	//	else if (curr->getDirection() == SOUTH) {
+	//		if (isValid(r + 1, c) && cells[r + 1][c]->unVisited()) {
+	//			curr->visit();
+	//			curr = cells[r + 1][c];
+	//			depthFirst(curr, end);
+	//		}
+	//		else {
+	//			curr->advanceDirection();
+	//			stk.pop();
+	//			depthFirst(curr, end);
+	//		}
+	//	}
+	//	else if (curr->getDirection() == WEST) {
+	//		if (isValid(r, c - 1) && cells[r][c - 1]->unVisited()){
+	//			curr->visit();
+	//			curr = cells[r][c - 1];
+	//			depthFirst(curr, end);
+	//		}
+	//		else {
+	//			curr->advanceDirection();
+	//			stk.pop();
+	//			depthFirst(curr, end);
+	//		}
+	//	}
+	//	else if (curr->getDirection() == DONE) {
+	//		//remove curr from stack
+	//		stk.pop();
+	//		curr = stk.top();
+	//		stk.pop();
+	//	}
+	//}
+	
+
+}
+
+//return true if pos is on grid and represents an open cell
+bool isValid(int r, int c) {
+	if (r >= 0 && r < rows && c >= 0 && c < cols) {
+		if (grid[r][c] != 0) {
+			//anything but 0 is valid
+			return true;
+		}
+		else {
+			cout << "invalid location "<<r<<","<<c << endl;
+		}
+	}
+	return false;
+}
+
+vector<MazeCell> getNeighbors(const MazeCell& curr)
+{
+	vector<MazeCell> result;
+
+	int r = curr.getRow();
+	int c = curr.getCol();
+
+	//check north, east, south, and west for neighbors
+	if (isValid(r - 1, c)) {
+		result.push_back(cells[r - 1][c]);
+	}
+	if (isValid(r, c + 1)) {
+		result.push_back(cells[r][c + 1]);
+	}
+	if (isValid(r + 1, c)) {
+		result.push_back(cells[r + 1][c]);
+	}
+	if (isValid(r, c - 1)) {
+		result.push_back(cells[r][c - 1]);
+	}
+	return result;
+}

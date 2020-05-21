@@ -42,7 +42,7 @@ public:
 	//no-arg constructor
 	MazeCell() {
 		row = col = -1;
-		direction = 4;
+		direction = 0;
 		visited = false;
 	}
 

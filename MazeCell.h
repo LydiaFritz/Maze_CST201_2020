@@ -1,8 +1,9 @@
 /*
 *
 *	CST-201, Maze Solver Project
-*	Provided started code
+*	Provided starter code
 *	MazeCell class
+*	DO NOT CHANGE THIS FILE
 *
 */
 
@@ -30,17 +31,22 @@ private:
 	bool visited;
 
 public:
+	//set row and col with r and c
 	MazeCell(int r, int c) {
 		row = r;
 		col = c;
 		direction = 0;
 		visited = false;
 	}
+
+	//no-arg constructor
 	MazeCell() {
 		row = col = -1;
 		direction = 4;
 		visited = false;
 	}
+
+	//copy constructor
 	MazeCell(const MazeCell& rhs) {
 		this->row = rhs.row;
 		this->col = rhs.col;
@@ -56,6 +62,7 @@ public:
 		if (direction == 4) visited = true;
 	}
 
+	//change row and col to r and c
 	void setCoordinates(int r, int c) {
 		this->row = r;
 		this->col = c;
@@ -65,6 +72,7 @@ public:
 
 	int getCol()const { return col; }
 
+	//cells are equal if they have the same row and col, respectively
 	bool operator==(const MazeCell& rhs)const {
 		return row == rhs.row && col == rhs.col;
 	}
@@ -73,24 +81,25 @@ public:
 		return !((*this) == rhs);
 	}
 
+	//output cell as ordered pair
 	friend ostream& operator<<(ostream& out, const MazeCell& rhs) {
-		out << "(" << rhs.row << "," << rhs.col << "," << rhs.direction << "," << rhs.visited << ")";
+		out << "(" << rhs.row << "," << rhs.col << ")";
 		return out;
 	}
 
 	//set visited status to true
-	void visit() {
-		visited = true;
-	}
+	void visit() { visited = true; }
 
 	//reset visited status
-	void reset() {
-		visited = false;
-	}
+	void reset() { visited = false; }
 
 	//return true if this cell is unvisited
-	bool unVisited()const {
-		return !visited;
+	bool unVisited()const { return !visited; }
+
+	//may be useful for testing, return string representation of cell
+	string toString()const {
+		string str = "(" + to_string(getRow()) + "," + to_string(getCol())+ ")";		
+		return str;
 	}
 
 
